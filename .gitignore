@@ -144,3 +144,5 @@ charts_archive/
 charts_storage/
 file_chunk/
 file_storage/
+
+openapi_gen.py

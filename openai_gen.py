@@ -9,9 +9,9 @@ config.read('config.ini')
 model_name = "gpt-4o-mini"
 no_of_kpi = 10
 
-client = OpenAI(
-  api_key="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"
-)
+# client = OpenAI(
+#   api_key=
+# )
 
 
 def generate_kpi(df_columns):
