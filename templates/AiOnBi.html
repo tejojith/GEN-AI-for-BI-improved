@@ -1,65 +1,239 @@
 <!DOCTYPE html> 
 <html lang="en"> 
-	<head> 
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
-        <style>
-            body {
-                font-family: Arial, sans-serif;
-            }
-    
-            h1 {
-                text-align: center;
-            }
-    
-            #chart-container {
-                display: flex;
-                flex-wrap: wrap;
-                justify-content: space-between;
-                gap: 10px; /* Adjust the gap between iframes */
-            }
-    
+<head> 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .filter-container {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .filter-group label {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .filter-group select {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .apply-btn {
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .apply-btn:hover {
+            background: #0056b3;
+        }
+
+        #chart-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .chart {
+            flex: 1 0 calc(33.33% - 20px);
+            min-width: 300px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .chart h3 {
+            background: #f8f9fa;
+            margin: 0;
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+            text-transform: capitalize;
+        }
+
+        .chart iframe {
+            width: 100%;
+            height: 400px;
+            border: none;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        @media only screen and (max-width: 768px) {
             .chart {
-            flex: 1 0 calc(33.33% - 10px); /* Each chart takes up one-third of the available space */
-                }
+                max-width: calc(50% - 20px);
+            }
+            .filter-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
 
-                @media only screen and (max-width: 768px) {
-                    .chart {
-                        max-width: calc(50% - 10px); /* Change to 2 columns on smaller screens */
-                    }
-                }
+        @media only screen and (max-width: 480px) {
+            .chart {
+                max-width: 100%;
+            }
+        }
+    </style>
+    <title>AI4BI - Business Intelligence Dashboard</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head> 
+<body>
+    <a href="{{ url_for('upload_file') }}" class="button">Go to Homepage</a>
+    
+    <h1>Business Intelligence Dashboard</h1>
+    <h4>Insights for file: <strong>{{name}}</strong></h4>
 
-                @media only screen and (max-width: 480px) {
-                    .chart {
-                        max-width: 100%; /* Change to 1 column on even smaller screens */
-                    }
-                }
-        </style>
-		<title> AI4BI </title>
-        <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>			 
-	</head> 
-	<body>
-        <a href="{{ url_for('upload_file') }}" class="button">Go to Homepage</a>
-        <h4>Insights for file {{name}}.</h1>
-        <h4>Below is the list of most Important KPIs which can be targetted:</h4>
-		<div align="left"> 
-			<ol> 
-                <!-- For loop logic of jinja template -->
-                {{ kpi_response }}  
-            </ol> 
-		</div> 
-        <div align="center"> 
-            <h1>Business Intelligence Charts</h1>
-            <div id="chart-container">
-                <!-- Render saved HTML charts using an iframe -->
+    <!-- Single Filter Container -->
+    <div class="filter-container">
+        <div class="filter-group">
+            <label for="year_filter">Filter by Year:</label>
+            <select name="time_filter" id="year_filter">
+                <option value="">All Years</option>
+                {% for year in unique_years %}
+                <option value="{{ year }}" {% if selected_year == year|string %}selected{% endif %}>{{ year }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <label for="month_filter">Filter by Month:</label>
+            <select name="month_filter" id="month_filter">
+                <option value="">All Months</option>
+                {% for month in unique_months %}
+                <option value="{{ month }}" {% if selected_month == month|string %}selected{% endif %}>
+                    {% if month == 1 %}January
+                    {% elif month == 2 %}February
+                    {% elif month == 3 %}March
+                    {% elif month == 4 %}April
+                    {% elif month == 5 %}May
+                    {% elif month == 6 %}June
+                    {% elif month == 7 %}July
+                    {% elif month == 8 %}August
+                    {% elif month == 9 %}September
+                    {% elif month == 10 %}October
+                    {% elif month == 11 %}November
+                    {% elif month == 12 %}December
+                    {% else %}Month {{ month }}
+                    {% endif %}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <button type="button" class="apply-btn" onclick="applyFilters()">Apply Filters</button>
+    </div>
+
+    <!-- KPI Information Section -->
+    <div style="margin-bottom: 30px;">
+        <h4>Most Important KPIs to Target:</h4>
+        <div style="background: #f8f9fa; padding: 20px; border-radius: 8px;">
+            {{ kpi_response | safe }}
+        </div>
+    </div>
+
+    <!-- Charts Container -->
+    <div align="center"> 
+        <h2>Interactive Business Intelligence Charts</h2>
+        <div id="chart-container">
+            {% if html_files %}
                 {% for html_file in html_files %}
                 <div class="chart">
-                    <h2>{{ html_file.split("/")[-1].split(".")[0] }}</h2>
-                    <iframe src="{{ url_for('static', filename=html_file) }}" width="100%" height="500"></iframe>
+                    <h3>{{ html_file.split("/")[-1].split(".")[0].replace("_", " ") }}</h3>
+                    <iframe src="{{ url_for('static', filename=html_file) }}"></iframe>
                 </div>
                 {% endfor %}
-            </div>
+            {% else %}
+                <div class="loading">
+                    <p>No charts available. Please generate charts first.</p>
+                </div>
+            {% endif %}
         </div>
-	</body> 
+    </div>
+
+    <script>
+        function applyFilters() {
+            const yearFilter = document.getElementById('year_filter').value;
+            const monthFilter = document.getElementById('month_filter').value;
+            
+            // Show loading state
+            document.getElementById('chart-container').innerHTML = '<div class="loading"><p>Updating charts...</p></div>';
+            
+            // Build URL with filters
+            let url = '/filterCharts/{{ name }}?';
+            const params = [];
+            
+            if (yearFilter) {
+                params.push('time_filter=' + encodeURIComponent(yearFilter));
+            }
+            if (monthFilter) {
+                params.push('month_filter=' + encodeURIComponent(monthFilter));
+            }
+            
+            url += params.join('&');
+            
+            // Fetch filtered charts
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.text();
+                })
+                .then(html => {
+                    document.getElementById('chart-container').innerHTML = html;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('chart-container').innerHTML = 
+                        '<div class="loading"><p>Error loading charts. Please try again.</p></div>';
+                });
+        }
+
+        // Optional: Apply filters when dropdowns change (for real-time filtering)
+        document.getElementById('year_filter').addEventListener('change', function() {
+            // Uncomment the next line if you want real-time filtering
+            applyFilters();
+        });
+
+        document.getElementById('month_filter').addEventListener('change', function() {
+            // Uncomment the next line if you want real-time filtering
+            applyFilters();
+        });
+    </script>
+</body> 
 </html>

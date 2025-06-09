@@ -1,0 +1,13 @@
+<!-- chart_iframes.html - Template for dynamically loaded charts -->
+{% if html_files %}
+    {% for html_file in html_files %}
+    <div class="chart">
+        <h3>{{ html_file.split("/")[-1].split(".")[0].replace("_", " ") }}</h3>
+        <iframe src="{{ url_for('static', filename=html_file) }}"></iframe>
+    </div>
+    {% endfor %}
+{% else %}
+    <div class="loading">
+        <p>No charts available for the selected filters.</p>
+    </div>
+{% endif %}
