@@ -186,6 +186,7 @@ def gen_bi(name):
 
     kpi_ai_list = [f.replace("charts_storage/", "").replace("_", " ").split(".")[0] for f in html_files]
     imp_kpi_list_display = generate_imp_kpi_info(kpi_ai_list)
+    print(imp_kpi_list_display)
     
     end_time = timer()
     print(f"Processing time: {end_time - start_time}")

@@ -54,7 +54,8 @@ def generate_imp_kpi_info(kpi_name_list):
                                       Out of the list of below KPIs: {kpi_name_list},
                                       Provide me the most important 3 KPIS and a definition restricted to 50 words only for each KPI.
                                       Strictly follow the KPI list, do not add any new KPI.
-                                      If the list is small then 3 then provide the KPI information only for that.     
+                                      If the list is small then 3 then provide the KPI information only for that.
+                                      give the output in line by line give end of line character    
                                       ''')
   return response.text
 

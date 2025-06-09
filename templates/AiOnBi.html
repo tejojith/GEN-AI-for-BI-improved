@@ -3,8 +3,8 @@
 <head> 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
-    <style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <!-- <style>
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
@@ -108,7 +108,7 @@
                 max-width: 100%;
             }
         }
-    </style>
+    </style> -->
     <title>AI4BI - Business Intelligence Dashboard</title>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 </head> 
@@ -118,6 +118,17 @@
     <h1>Business Intelligence Dashboard</h1>
     <h4>Insights for file: <strong>{{name}}</strong></h4>
 
+
+
+    <!-- KPI Information Section -->
+    <div style="margin-bottom: 30px;">
+        <h4>Most Important KPIs to Target:</h4>
+        <div style="background: #f8f9fa; padding: 20px; border-radius: 8px;">
+            {{ kpi_response | safe }}
+        </div>
+    </div>
+
+    
     <!-- Single Filter Container -->
     <div class="filter-container">
         <div class="filter-group">
@@ -155,17 +166,8 @@
             </select>
         </div>
 
-        <button type="button" class="apply-btn" onclick="applyFilters()">Apply Filters</button>
+        <!-- <button type="button" class="apply-btn" onclick="applyFilters()">Apply Filters</button> -->
     </div>
-
-    <!-- KPI Information Section -->
-    <div style="margin-bottom: 30px;">
-        <h4>Most Important KPIs to Target:</h4>
-        <div style="background: #f8f9fa; padding: 20px; border-radius: 8px;">
-            {{ kpi_response | safe }}
-        </div>
-    </div>
-
     <!-- Charts Container -->
     <div align="center"> 
         <h2>Interactive Business Intelligence Charts</h2>

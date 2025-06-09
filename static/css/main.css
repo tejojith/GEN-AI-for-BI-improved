@@ -1,7 +1,7 @@
 body,
 html {
     margin: auto;
-    font-family: sans-serif;
+    font-family: Arial, Helvetica, sans-serif;
     background-image: url("ai_light_background.avif");
     background-color: rgb(51, 204, 255);
     background-repeat: no-repeat;
