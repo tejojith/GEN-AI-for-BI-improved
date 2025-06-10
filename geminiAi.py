@@ -63,8 +63,9 @@ def check_db(df_columns):
   response = model.generate_content(f'''You are a data engineer.
                                       Out of the list of table headings: {df_columns},
                                       check if there is a table heading with date or time and give me the columns to separate it to get year_id and month_id.
-                                      If there is no date or time column then return "No date or time column found".
-                                          
+                                      If there is no date or time column then return "None".
+                                      Return only the name of that particular column. Return nothing else.
+                                      if there is already a year_id and month_id column then return "None".
                                       ''')
   return response.text
 

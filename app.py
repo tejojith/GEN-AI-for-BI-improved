@@ -5,7 +5,7 @@ import os, shutil
 from werkzeug.utils import secure_filename
 from markupsafe import escape
 import pandas as pd
-from geminiAi import generate_kpi, generate_chart, generate_imp_kpi_info
+from geminiAi import generate_kpi, generate_chart, generate_imp_kpi_info, check_db
 import json
 import re
 from charts import bar_chart, line_chart, scatter_chart
@@ -30,6 +30,21 @@ app.config['UPLOAD_FOLDER'] = file_storage_folder
 # Store chart configurations globally to avoid regenerating
 chart_configs = {}
 
+def convert_date(column_list):
+
+    ai_response = check_db(df_columns = column_list)
+    start = ai_response.find('{')
+    end = ai_response.rfind('}')
+    actual_ai_resp = json.loads(ai_response[start:end + 1])
+    
+    return actual_ai_resp
+
+    #     # Assuming df is your DataFrame and 'datetime_column' is your datetime column
+    # df['datetime_column'] = pd.to_datetime(df['datetime_column'])  # Convert to datetime if not already
+    # df['year_id'] = df['datetime_column'].dt.year
+    # df['month_id'] = df['datetime_column'].dt.month
+
+
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/upload', methods=['GET', 'POST'])
 def upload_file():
@@ -49,6 +64,7 @@ def upload_file():
     return render_template('homepage.html')
 
 @app.route('/DfViewer/<name>')
+
 def DfViewer(name):
     file_type = 'comma'
     default_encoding = 'utf-8'
@@ -89,9 +105,12 @@ def DfViewer(name):
         default_encoding = 'latin-1'
         df = pd.read_csv(os.path.join(file_storage_folder, name), encoding=default_encoding)
     
-    df.columns = df.columns.str.upper()
+    # text = check_db(name)
+    text = "test"
+
+    df.columns = df.columns.str.upper() 
     return render_template('DataFrame.html', tables=[df.to_html()], name=name, 
-                         file_type=file_type, default_encoding=default_encoding, titles=[''])
+                         file_type=file_type, default_encoding=default_encoding, titles=[''], output = text)
 
 @app.route('/genBi/<name>', methods=['GET'])
 def gen_bi(name):
@@ -104,6 +123,19 @@ def gen_bi(name):
 
     df.columns = df.columns.str.upper()
     column_list = list(df.columns)
+
+    #to separate into year_id and month_id
+    ai_response = convert_date(column_list)
+    print(ai_response)
+    if ai_response == "None":
+        pass
+    else:
+        # Convert to datetime
+        df["datetime_column"] = pd.to_datetime(df["datetime_column"])
+
+        # Extract year and month
+        df["YEAR_ID"] = df["datetime_column"].dt.year
+        df["MONTH_ID"] = df["datetime_column"].dt.month
 
     # Get unique years/months for filter dropdowns (from full dataset)
     unique_years = sorted(df['YEAR_ID'].dropna().unique().tolist()) if 'YEAR_ID' in df.columns else []
