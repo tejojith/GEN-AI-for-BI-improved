@@ -59,6 +59,14 @@ def generate_imp_kpi_info(kpi_name_list):
                                       ''')
   return response.text
 
+def check_db(df_columns):
+  response = model.generate_content(f'''You are a data engineer.
+                                      Out of the list of table headings: {df_columns},
+                                      check if there is a table heading with date or time and give me the columns to separate it to get year_id and month_id.
+                                      If there is no date or time column then return "No date or time column found".
+                                          
+                                      ''')
+  return response.text
 
 
     
