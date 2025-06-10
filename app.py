@@ -65,7 +65,7 @@ def DfViewer(name):
     elif name.endswith('csv'):
         try:
             with open(os.path.join(file_storage_folder, name), 'r') as file:
-                lines = [file.readline() for _ in range(5)]
+                lines = [file.readline() for _ in range(100)]
             if any(',' in line for line in lines):
                 file_type = 'comma'
             elif any('|' in line for line in lines):
