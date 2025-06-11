@@ -55,10 +55,19 @@ def generate_imp_kpi_info(kpi_name_list):
                                       Provide me the most important 3 KPIS and a definition restricted to 50 words only for each KPI.
                                       Strictly follow the KPI list, do not add any new KPI.
                                       If the list is small then 3 then provide the KPI information only for that.
-                                      give the output in line by line give end of line character    
+                                      give the output in line by line give end of line character which is \n.   
                                       ''')
   return response.text
 
+def check_db(df_columns):
+  response = model.generate_content(f'''You are a data engineer.
+                                      Out of the list of table headings: {df_columns},
+                                      check if there is a table heading with date or time and give me the columns to separate it to get year_id and month_id.
+                                      If there is no date or time column then return "None".
+                                      Return only the name of that particular column. Return nothing else.
+                                      if there is already a year_id and month_id column then return "None".
+                                      ''')
+  return response.text
 
 
     

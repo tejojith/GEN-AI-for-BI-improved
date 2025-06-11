@@ -5,7 +5,7 @@ import os, shutil
 from werkzeug.utils import secure_filename
 from markupsafe import escape
 import pandas as pd
-from geminiAi import generate_kpi, generate_chart, generate_imp_kpi_info
+from geminiAi import generate_kpi, generate_chart, generate_imp_kpi_info, check_db
 import json
 import re
 from charts import bar_chart, line_chart, scatter_chart
@@ -27,8 +27,17 @@ charts_archive_storage = config['PATHS']['CHARTS_ARCHIVE_STORAGE']
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = file_storage_folder
 
-# Store chart configurations globally to avoid regenerating
-chart_configs = {}
+
+chart_configs = {}  # Store chart configurations for dynamic filtering
+
+
+ # Assuming df is your DataFrame and 'datetime_column' is your datetime column
+   
+   
+    # df['datetime_column'] = pd.to_datetime(df['datetime_column'])  # Convert to datetime if not already
+    # df['year_id'] = df['datetime_column'].dt.year
+    # df['month_id'] = df['datetime_column'].dt.month
+
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/upload', methods=['GET', 'POST'])
@@ -49,6 +58,7 @@ def upload_file():
     return render_template('homepage.html')
 
 @app.route('/DfViewer/<name>')
+
 def DfViewer(name):
     file_type = 'comma'
     default_encoding = 'utf-8'
@@ -65,7 +75,7 @@ def DfViewer(name):
     elif name.endswith('csv'):
         try:
             with open(os.path.join(file_storage_folder, name), 'r') as file:
-                lines = [file.readline() for _ in range(5)]
+                lines = [file.readline() for _ in range(100)]
             if any(',' in line for line in lines):
                 file_type = 'comma'
             elif any('|' in line for line in lines):
@@ -89,13 +99,16 @@ def DfViewer(name):
         default_encoding = 'latin-1'
         df = pd.read_csv(os.path.join(file_storage_folder, name), encoding=default_encoding)
     
-    df.columns = df.columns.str.upper()
+    # text = check_db(name)
+    text = "test"
+
+    df.columns = df.columns.str.upper() 
     return render_template('DataFrame.html', tables=[df.to_html()], name=name, 
-                         file_type=file_type, default_encoding=default_encoding, titles=[''])
+                         file_type=file_type, default_encoding=default_encoding, titles=[''], output = text)
 
 @app.route('/genBi/<name>', methods=['GET'])
 def gen_bi(name):
-    global chart_configs
+    
     
     try:
         df = pd.read_csv(os.path.join(file_storage_folder, name))
@@ -105,12 +118,25 @@ def gen_bi(name):
     df.columns = df.columns.str.upper()
     column_list = list(df.columns)
 
+    #to separate into year_id and month_id
+    ai_response = check_db(column_list)
+    ai_response = ai_response.split('\n')[0].strip()
+    if ai_response == "None":
+        pass
+    else:
+        # Convert to datetime
+        df[f"{ai_response}"] = pd.to_datetime(df[f"{ai_response}"])
+
+        # Extract year and month
+        df["YEAR_ID"] = df[f"{ai_response}"].dt.year
+        df["MONTH_ID"] = df[f"{ai_response}"].dt.month
+
     # Get unique years/months for filter dropdowns (from full dataset)
     unique_years = sorted(df['YEAR_ID'].dropna().unique().tolist()) if 'YEAR_ID' in df.columns else []
     unique_months = sorted(df['MONTH_ID'].dropna().unique().tolist()) if 'MONTH_ID' in df.columns else []
 
     start_time = timer()
-
+    global chart_configs
     # Generate KPIs and charts only once
     if name not in chart_configs:
         for i in range(3):
