@@ -104,7 +104,7 @@ def DfViewer(name):
 
     df.columns = df.columns.str.upper() 
     return render_template('DataFrame.html', tables=[df.to_html()], name=name, 
-                         file_type=file_type, default_encoding=default_encoding, titles=[''], output = text)
+                         file_type=file_type, default_encoding=default_encoding, titles=[''])
 
 @app.route('/genBi/<name>', methods=['GET'])
 def gen_bi(name):
@@ -196,7 +196,8 @@ def gen_bi(name):
     # Generate charts with current filters
     selected_year = request.args.get('time_filter')
     selected_month = request.args.get('month_filter')
-    
+
+
     filtered_df = df.copy()
     if selected_year and 'YEAR_ID' in df.columns:
         filtered_df = filtered_df[filtered_df['YEAR_ID'] == int(selected_year)]
@@ -212,13 +213,19 @@ def gen_bi(name):
 
     kpi_ai_list = [f.replace("charts_storage/", "").replace("_", " ").split(".")[0] for f in html_files]
     imp_kpi_list_display = generate_imp_kpi_info(kpi_ai_list)
+    imp_kpi_list_display = imp_kpi_list_display.split('\n')
+    imp1 = imp_kpi_list_display[0].strip()
+    imp2 = imp_kpi_list_display[2].strip()
+    imp3 = imp_kpi_list_display[4].strip()
     print(imp_kpi_list_display)
     
     end_time = timer()
     print(f"Processing time: {end_time - start_time}")
 
     return render_template('AiOnBi.html',
-                           kpi_response=imp_kpi_list_display,
+                           imp1=imp1,
+                           imp2=imp2,
+                           imp3=imp3,
                            name=name,
                            html_files=html_files,
                            unique_years=unique_years,
