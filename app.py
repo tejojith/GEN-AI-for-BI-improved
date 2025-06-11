@@ -27,19 +27,13 @@ charts_archive_storage = config['PATHS']['CHARTS_ARCHIVE_STORAGE']
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = file_storage_folder
 
-# Store chart configurations globally to avoid regenerating
-chart_configs = {}
 
-def convert_date(column_list):
+chart_configs = {}  # Store chart configurations for dynamic filtering
 
-    ai_response = check_db(df_columns = column_list)
-    start = ai_response.find('{')
-    end = ai_response.rfind('}')
-    actual_ai_resp = json.loads(ai_response[start:end + 1])
-    
-    return actual_ai_resp
 
-    #     # Assuming df is your DataFrame and 'datetime_column' is your datetime column
+ # Assuming df is your DataFrame and 'datetime_column' is your datetime column
+   
+   
     # df['datetime_column'] = pd.to_datetime(df['datetime_column'])  # Convert to datetime if not already
     # df['year_id'] = df['datetime_column'].dt.year
     # df['month_id'] = df['datetime_column'].dt.month
@@ -114,7 +108,7 @@ def DfViewer(name):
 
 @app.route('/genBi/<name>', methods=['GET'])
 def gen_bi(name):
-    global chart_configs
+    
     
     try:
         df = pd.read_csv(os.path.join(file_storage_folder, name))
@@ -125,24 +119,24 @@ def gen_bi(name):
     column_list = list(df.columns)
 
     #to separate into year_id and month_id
-    ai_response = convert_date(column_list)
-    print(ai_response)
+    ai_response = check_db(column_list)
+    ai_response = ai_response.split('\n')[0].strip()
     if ai_response == "None":
         pass
     else:
         # Convert to datetime
-        df["datetime_column"] = pd.to_datetime(df["datetime_column"])
+        df[f"{ai_response}"] = pd.to_datetime(df[f"{ai_response}"])
 
         # Extract year and month
-        df["YEAR_ID"] = df["datetime_column"].dt.year
-        df["MONTH_ID"] = df["datetime_column"].dt.month
+        df["YEAR_ID"] = df[f"{ai_response}"].dt.year
+        df["MONTH_ID"] = df[f"{ai_response}"].dt.month
 
     # Get unique years/months for filter dropdowns (from full dataset)
     unique_years = sorted(df['YEAR_ID'].dropna().unique().tolist()) if 'YEAR_ID' in df.columns else []
     unique_months = sorted(df['MONTH_ID'].dropna().unique().tolist()) if 'MONTH_ID' in df.columns else []
 
     start_time = timer()
-
+    global chart_configs
     # Generate KPIs and charts only once
     if name not in chart_configs:
         for i in range(3):
