@@ -260,11 +260,17 @@ def filter_charts(name):
             df = df[df['MONTH_ID'] == int(selected_month)]
         except ValueError:
             pass
+    highlight = request.args.get('highlight')
+    v1 = request.args.get('v1')  # format: '2024-3'
+    v2 = request.args.get('v2')
+
+    values1 = [tuple(map(int, v1.split('-')))] if v1 else []
+    values2 = [tuple(map(int, v2.split('-')))] if v2 else []
 
     # Use stored chart configuration instead of calling Gemini again
     #most imp
     if name in chart_configs:
-        get_charts_output(df=df, actual_resp=chart_configs[name])
+        get_charts_output(df=df, actual_resp=chart_configs[name],value1=values1, value2=values2)
     else:
         # Fallback: regenerate if config not found
         column_list = list(df.columns)
