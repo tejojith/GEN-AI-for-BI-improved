@@ -73,7 +73,7 @@
         <form method="post" enctype="multipart/form-data">
             <div class="button-wrap">
               <label class="button" for="upload">Upload File<input id="upload" type="file" name="file"></label>
-              
+              <p id = "filename"></p>
             </div>
             <div class="button-wrap">
                 <input type="submit" value="Submit">
@@ -82,4 +82,19 @@
     </div>
 </div>
 
+
 {% endblock %}
+
+<script>
+    const fileInput = document.getElementById("file-upload");
+    const fileNameDisplay = document.getElementById("file-name");
+
+    fileInput.addEventListener("change", () => {
+    if (fileInput.files.length > 0) {
+        const fileName = fileInput.files[0].name;
+        fileNameDisplay.textContent = fileName;
+    } else {
+        fileNameDisplay.textContent = "No file selected";
+    }
+    });
+</script>

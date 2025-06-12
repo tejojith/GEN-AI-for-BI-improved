@@ -124,7 +124,11 @@
     <div style="margin-bottom: 30px;">
         <h4>Most Important KPIs to Target:</h4>
         <div style="background: #f8f9fa; padding: 20px; border-radius: 8px;">
-            {{ kpi_response | safe }}
+            <ul>
+            <li>{{ imp1 | safe }}</li>
+            <li>{{ imp2 | safe }}</li>
+            <li>{{ imp3 | safe }}</li>
+            </ul>
         </div>
     </div>
 
@@ -165,6 +169,46 @@
                 {% endfor %}
             </select>
         </div>
+        <div class="filter-group">
+            <label>
+                <input type="checkbox" id="color_filter_toggle"> Filter by Colour
+            </label>
+        </div>
+
+        <div class="filter-group" id="value1_group" style="display: none;">
+            <label for="value1_year">Value 1 - Year:</label>
+            <select id="value1_year">
+                <option value="">Select Year</option>
+                {% for year in unique_years %}
+                <option value="{{ year }}">{{ year }}</option>
+                {% endfor %}
+            </select>
+            <label for="value1_month">Value 1 - Month:</label>
+            <select id="value1_month">
+                <option value="">Select Month</option>
+                {% for month in unique_months %}
+                <option value="{{ month }}">{{ month }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="filter-group" id="value2_group" style="display: none;">
+            <label for="value2_year">Value 2 - Year:</label>
+            <select id="value2_year">
+                <option value="">Select Year</option>
+                {% for year in unique_years %}
+                <option value="{{ year }}">{{ year }}</option>
+                {% endfor %}
+            </select>
+            <label for="value2_month">Value 2 - Month:</label>
+            <select id="value2_month">
+                <option value="">Select Month</option>
+                {% for month in unique_months %}
+                <option value="{{ month }}">{{ month }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
 
         <!-- <button type="button" class="apply-btn" onclick="applyFilters()">Apply Filters</button> -->
     </div>
@@ -205,6 +249,7 @@
             if (monthFilter) {
                 params.push('month_filter=' + encodeURIComponent(monthFilter));
             }
+
             
             url += params.join('&');
             
@@ -234,6 +279,53 @@
         document.getElementById('month_filter').addEventListener('change', function() {
             applyFilters();
         });
+
+
+        document.getElementById('color_filter_toggle').addEventListener('change', function() {
+            const isChecked = this.checked;
+            document.getElementById('value1_group').style.display = isChecked ? 'flex' : 'none';
+            document.getElementById('value2_group').style.display = isChecked ? 'flex' : 'none';
+            applyFilters();
+        });
+
+        document.querySelectorAll('#value1_year, #value1_month, #value2_year, #value2_month')
+            .forEach(el => el.addEventListener('change', applyFilters));
+
+        function applyFilters() {
+            const yearFilter = document.getElementById('year_filter').value;
+            const monthFilter = document.getElementById('month_filter').value;
+            const colorFilterEnabled = document.getElementById('color_filter_toggle').checked;
+            const value1Year = document.getElementById('value1_year').value;
+            const value1Month = document.getElementById('value1_month').value;
+            const value2Year = document.getElementById('value2_year').value;
+            const value2Month = document.getElementById('value2_month').value;
+
+            let url = `/filterCharts/{{ name }}?`;
+            const params = [];
+
+            if (yearFilter) params.push(`time_filter=${encodeURIComponent(yearFilter)}`);
+            if (monthFilter) params.push(`month_filter=${encodeURIComponent(monthFilter)}`);
+            if (colorFilterEnabled) {
+                params.push(`highlight=1`);
+                if (value1Year && value1Month) params.push(`v1=${value1Year}-${value1Month}`);
+                if (value2Year && value2Month) params.push(`v2=${value2Year}-${value2Month}`);
+            }
+
+            url += params.join('&');
+
+            document.getElementById('chart-container').innerHTML = '<div class="loading"><p>Updating charts...</p></div>';
+
+            fetch(url)
+                .then(res => res.text())
+                .then(html => {
+                    document.getElementById('chart-container').innerHTML = html;
+                })
+                .catch(err => {
+                    console.error(err);
+                    document.getElementById('chart-container').innerHTML = '<div class="loading"><p>Error loading charts</p></div>';
+                });
+        }
+
     </script>
 </body> 
 </html>
