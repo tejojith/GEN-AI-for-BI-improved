@@ -20,7 +20,7 @@ git clone https://github.com/tejojith/GEN-AI-for-BI-improved.git
 cd GEN-AI-for-BI-improved
 pip install -r requirements.txt
 ```
-You’ll need API keys (e.g. OpenAI, Azure/OpenAI, LangChain)
+You’ll need API keys (e.g. Gemini, OpenAI, Azure/OpenAI, LangChain)
 
 
 ## 🚧 Roadmap
