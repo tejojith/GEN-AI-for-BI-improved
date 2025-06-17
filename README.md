@@ -39,4 +39,13 @@ Native connectors for Looker, Qlik, and Oracle BI.
 🔐 Enterprise Requirements
 Audit logging, data governance, security enhancements.
 
+## UI Snapshots
+
+![Home page](https://github.com/tejojith/GEN-AI-for-BI-improved/blob/main/Output/home%20page.png)
+![Dataframe page](https://github.com/tejojith/GEN-AI-for-BI-improved/blob/main/Output/dataframe.png)
+![Wihtout filters page](https://github.com/tejojith/GEN-AI-for-BI-improved/blob/main/Output/charts%20without%20filters.png)
+![charts2 page](https://github.com/tejojith/GEN-AI-for-BI-improved/blob/main/Output/charts2.png)
+![with YM filter page](https://github.com/tejojith/GEN-AI-for-BI-improved/blob/main/Output/filter%20by%20year%20month.png)
+![With colour filter page](https://github.com/tejojith/GEN-AI-for-BI-improved/blob/main/Output/filter%20by%20colour.png)
+
 
