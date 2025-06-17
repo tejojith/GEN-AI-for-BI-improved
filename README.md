@@ -15,7 +15,7 @@ Narrative Summaries
 Generate human‑readable narratives that explain trends, anomalies, and summarizations.
 
 ## 📦 Installation
-'''
+'''ruby
 git clone https://github.com/tejojith/GEN-AI-for-BI-improved.git
 cd GEN-AI-for-BI-improved
 pip install -r requirements.txt
