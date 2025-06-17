@@ -1,5 +1,5 @@
 # GenAI for BI
-An imporved version of [AI4BI](https://github.com/Vinayakmoudgil/AI4BI).
+An improved version of [AI4BI](https://github.com/Vinayakmoudgil/AI4BI).
 
 ## Overview
 GEN‑AI for BI is an enhanced toolkit for leveraging Generative AI in Business Intelligence workflows. It enables natural‑language querying of data, auto‑generation of dashboards and visual insights, and integration with BI tools for data storytelling and decision support.
