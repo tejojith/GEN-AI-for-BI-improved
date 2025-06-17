@@ -1,16 +1,42 @@
-# AI4BI
-Generates Insights from the data just by providing files
+# GenAI for BI
+An improved version of [AI4BI](https://github.com/Vinayakmoudgil/AI4BI).
 
-The sample files for testing are present in the Sample folder.
+## Overview
+GEN‑AI for BI is an enhanced toolkit for leveraging Generative AI in Business Intelligence workflows. It enables natural‑language querying of data, auto‑generation of dashboards and visual insights, and integration with BI tools for data storytelling and decision support.
 
-# Steps to Run the App
-1. Install all the libraries provided in the requirements.txt
-2. Get the Gemini Pro API key from the link : https://ai.google.dev/tutorials/setup
-3. Add the paths in the config.ini file where all the charts and sample files will be stored
-4. Run the app with below command: 
-```python app.py```
+## 🚀 Features
+Natural Language Interface
+Query your data in plain English (or any supported language) and receive structured answers, SQL templates, or charts.
 
-## UI snapshot
-<img width="960" alt="image" src="https://github.com/Vinayakmoudgil/AI4BI/assets/68346310/2bdff023-b66f-48ec-a782-c6f847911970">
+Dashboard Auto‑Generation
+From a few prompts, build dashboards using popular BI tools (Power BI, Tableau, Looker).
+
+Narrative Summaries
+Generate human‑readable narratives that explain trends, anomalies, and summarizations.
+
+## 📦 Installation
+```ruby
+git clone https://github.com/tejojith/GEN-AI-for-BI-improved.git
+cd GEN-AI-for-BI-improved
+pip install -r requirements.txt
+```
+You’ll need API keys (e.g. Gemini, OpenAI, Azure/OpenAI, LangChain)
+
+
+## 🚧 Roadmap
+🔁 Multi-Language Support
+Localized prompts, narratives, and dashboards.
+
+📈 Time-Series Insights
+Enhanced anomaly detection and visualization.
+
+🤖 Agentic Workflows
+Integrate RAG or agent-style chains for automated workflows.
+
+📊 Extra BI Tools
+Native connectors for Looker, Qlik, and Oracle BI.
+
+🔐 Enterprise Requirements
+Audit logging, data governance, security enhancements.
 
 
